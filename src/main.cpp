@@ -9,6 +9,7 @@
 #define INPUT_FOUR 6
 
 int val = 0;
+int c = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -23,28 +24,91 @@ void setup() {
   Serial.begin(9600);
 }
 
+void startGameLights() {
+  digitalWrite(RED_LED, HIGH);
+  delay(50);
+  digitalWrite(RED_LED, LOW);
+  digitalWrite(YELLOW_LED, HIGH);
+  delay(50);
+  digitalWrite(YELLOW_LED, LOW);
+  digitalWrite(GREEN_LED, HIGH);
+  delay(50);
+  digitalWrite(GREEN_LED, LOW);
+  digitalWrite(BLUE_LED, HIGH);
+  delay(50);
+  digitalWrite(BLUE_LED, LOW);
+  digitalWrite(RED_LED, HIGH);
+  delay(50);
+  digitalWrite(RED_LED, LOW);
+  digitalWrite(YELLOW_LED, HIGH);
+  delay(50);
+  digitalWrite(YELLOW_LED, LOW);
+  digitalWrite(GREEN_LED, HIGH);
+  delay(50);
+  digitalWrite(GREEN_LED, LOW);
+  digitalWrite(BLUE_LED, HIGH);
+  delay(50);
+  digitalWrite(BLUE_LED, LOW);
+  digitalWrite(RED_LED, HIGH);
+  delay(50);
+  digitalWrite(RED_LED, LOW);
+  digitalWrite(YELLOW_LED, HIGH);
+  delay(50);
+  digitalWrite(YELLOW_LED, LOW);
+  digitalWrite(GREEN_LED, HIGH);
+  delay(50);
+  digitalWrite(GREEN_LED, LOW);
+  digitalWrite(BLUE_LED, HIGH);
+  delay(50);
+  digitalWrite(BLUE_LED, LOW);
+  digitalWrite(RED_LED, HIGH);
+  delay(50);
+  digitalWrite(RED_LED, LOW);
+  digitalWrite(YELLOW_LED, HIGH);
+  delay(50);
+  digitalWrite(YELLOW_LED, LOW);
+  digitalWrite(GREEN_LED, HIGH);
+  delay(50);
+  digitalWrite(GREEN_LED, LOW);
+  digitalWrite(BLUE_LED, HIGH);
+  delay(50);
+  digitalWrite(BLUE_LED, LOW);
+}
+
 void loop() {
   // put your main code here, to run repeatedly:
   val = digitalRead(INPUT_ONE);
-  if(val == HIGH) {
+  if (val == HIGH) {
+    c++;
     digitalWrite(RED_LED, HIGH);
-    Serial.println("HIGH");
   }
   val = digitalRead(INPUT_TWO);
-  if(val == HIGH) {
+  if (val == HIGH) {
+    c++;
     digitalWrite(YELLOW_LED, HIGH);
-    Serial.println("HIGH");
   }
   val = digitalRead(INPUT_THREE);
-  if(val == HIGH) {
+  if (val == HIGH) {
+    c++;
     digitalWrite(GREEN_LED, HIGH);
-    Serial.println("HIGH");
   }
   val = digitalRead(INPUT_FOUR);
-  if(val == HIGH) {
+  if (val == HIGH) {
+    c++;
     digitalWrite(BLUE_LED, HIGH);
-    Serial.println("HIGH");
   }
+  if (c == 4) {
+    Serial.println("ALL PRESSED!");
+    delay(500);
+    // all LEDs off
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(YELLOW_LED, LOW);
+    digitalWrite(GREEN_LED, LOW);
+    digitalWrite(BLUE_LED, LOW);
+
+    startGameLights();
+  }
+  c = 0;
   digitalWrite(RED_LED, LOW);
   digitalWrite(YELLOW_LED, LOW);
   digitalWrite(GREEN_LED, LOW);
