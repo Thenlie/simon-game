@@ -11,8 +11,8 @@
 int val = 0;
 int c = 0;
 
+// run once on setup
 void setup() {
-  // put your setup code here, to run once:
   pinMode(RED_LED, OUTPUT);
   pinMode(YELLOW_LED, OUTPUT);
   pinMode(GREEN_LED, OUTPUT);
@@ -25,58 +25,43 @@ void setup() {
 }
 
 void startGameLights() {
-  digitalWrite(RED_LED, HIGH);
-  delay(50);
-  digitalWrite(RED_LED, LOW);
-  digitalWrite(YELLOW_LED, HIGH);
-  delay(50);
-  digitalWrite(YELLOW_LED, LOW);
-  digitalWrite(GREEN_LED, HIGH);
-  delay(50);
-  digitalWrite(GREEN_LED, LOW);
-  digitalWrite(BLUE_LED, HIGH);
-  delay(50);
-  digitalWrite(BLUE_LED, LOW);
-  digitalWrite(RED_LED, HIGH);
-  delay(50);
-  digitalWrite(RED_LED, LOW);
-  digitalWrite(YELLOW_LED, HIGH);
-  delay(50);
-  digitalWrite(YELLOW_LED, LOW);
-  digitalWrite(GREEN_LED, HIGH);
-  delay(50);
-  digitalWrite(GREEN_LED, LOW);
-  digitalWrite(BLUE_LED, HIGH);
-  delay(50);
-  digitalWrite(BLUE_LED, LOW);
-  digitalWrite(RED_LED, HIGH);
-  delay(50);
-  digitalWrite(RED_LED, LOW);
-  digitalWrite(YELLOW_LED, HIGH);
-  delay(50);
-  digitalWrite(YELLOW_LED, LOW);
-  digitalWrite(GREEN_LED, HIGH);
-  delay(50);
-  digitalWrite(GREEN_LED, LOW);
-  digitalWrite(BLUE_LED, HIGH);
-  delay(50);
-  digitalWrite(BLUE_LED, LOW);
-  digitalWrite(RED_LED, HIGH);
-  delay(50);
-  digitalWrite(RED_LED, LOW);
-  digitalWrite(YELLOW_LED, HIGH);
-  delay(50);
-  digitalWrite(YELLOW_LED, LOW);
-  digitalWrite(GREEN_LED, HIGH);
-  delay(50);
-  digitalWrite(GREEN_LED, LOW);
-  digitalWrite(BLUE_LED, HIGH);
-  delay(50);
-  digitalWrite(BLUE_LED, LOW);
+  for (int i = 0; i < 5; i++) {
+    digitalWrite(RED_LED, HIGH);
+    delay(75);
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(YELLOW_LED, HIGH);
+    delay(75);
+    digitalWrite(YELLOW_LED, LOW);
+    digitalWrite(GREEN_LED, HIGH);
+    delay(75);
+    digitalWrite(GREEN_LED, LOW);
+    digitalWrite(BLUE_LED, HIGH);
+    delay(75);
+    digitalWrite(BLUE_LED, LOW);
+  }
 }
 
+void startGame() {
+  startGameLights();
+  for (int i = 0; i < 3; i++) {
+    // all LEDs on
+    digitalWrite(RED_LED, HIGH);
+    digitalWrite(YELLOW_LED, HIGH);
+    digitalWrite(GREEN_LED, HIGH);
+    digitalWrite(BLUE_LED, HIGH);
+    delay(500);
+    // all LEDs off
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(YELLOW_LED, LOW);
+    digitalWrite(GREEN_LED, LOW);
+    digitalWrite(BLUE_LED, LOW);
+    delay(500);
+  }
+}
+
+// main loop
 void loop() {
-  // put your main code here, to run repeatedly:
+  // check for button presses, turn on associated LED
   val = digitalRead(INPUT_ONE);
   if (val == HIGH) {
     c++;
@@ -97,6 +82,7 @@ void loop() {
     c++;
     digitalWrite(BLUE_LED, HIGH);
   }
+  // check if all buttons were pushed at once
   if (c == 4) {
     Serial.println("ALL PRESSED!");
     delay(500);
@@ -106,9 +92,10 @@ void loop() {
     digitalWrite(GREEN_LED, LOW);
     digitalWrite(BLUE_LED, LOW);
 
-    startGameLights();
+    startGame();
   }
   c = 0;
+  // all LEDs off
   digitalWrite(RED_LED, LOW);
   digitalWrite(YELLOW_LED, LOW);
   digitalWrite(GREEN_LED, LOW);
