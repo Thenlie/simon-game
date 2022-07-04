@@ -12,6 +12,7 @@ int val = 0;
 int btnCount = 0; // count of button pushes per loop
 int level = 1; // count for number of lights in pattern
 int patternArr[100]; // pattern the user will repeat
+bool running = false; // game state
 
 // run once on setup
 void setup() {
@@ -75,6 +76,7 @@ void displayPattern() {
 }
 
 void startGame() {
+  running = true;
   startGameLights();
   // countdown flashes
   for (int i = 0; i < 3; i++) {
