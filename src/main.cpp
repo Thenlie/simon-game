@@ -3,13 +3,15 @@
 #define YELLOW_LED 9 // Yellow LED
 #define GREEN_LED 10 // Green LED
 #define BLUE_LED 11 // Blue LED
-#define INPUT_ONE 3
-#define INPUT_TWO 4
-#define INPUT_THREE 5
-#define INPUT_FOUR 6
+#define INPUT_ONE 3 // Button 1
+#define INPUT_TWO 4 // Button 2
+#define INPUT_THREE 5 // Button 3
+#define INPUT_FOUR 6 // Button 4
 
 int val = 0;
-int c = 0;
+int btnCount = 0; // count of button pushes per loop
+int level = 1; // count for number of lights in pattern
+int patternArr[100]; // pattern the user will repeat
 
 // run once on setup
 void setup() {
@@ -21,6 +23,9 @@ void setup() {
   pinMode(INPUT_TWO, INPUT);
   pinMode(INPUT_THREE, INPUT);
   pinMode(INPUT_FOUR, INPUT);
+  for (int i = 0; i < 100; i++) {
+    patternArr[i] = random(4) + 1; 
+  }
   Serial.begin(9600);
 }
 
@@ -41,8 +46,37 @@ void startGameLights() {
   }
 }
 
+void displayPattern() {
+  for (int i = 0; i < level; i++) {
+    switch (patternArr[i]) {
+      case 1:
+        digitalWrite(RED_LED, HIGH);
+        delay(100);
+        digitalWrite(RED_LED, LOW);
+        break;
+      case 2:
+        digitalWrite(YELLOW_LED, HIGH);
+        delay(100);
+        digitalWrite(YELLOW_LED, LOW);
+        break;
+      case 3:
+        digitalWrite(GREEN_LED, HIGH);
+        delay(100);
+        digitalWrite(GREEN_LED, LOW);
+        break;
+      case 4:
+        digitalWrite(BLUE_LED, HIGH);
+        delay(100);
+        digitalWrite(BLUE_LED, LOW);
+        break;
+    }
+    delay(50);
+  }
+}
+
 void startGame() {
   startGameLights();
+  // countdown flashes
   for (int i = 0; i < 3; i++) {
     // all LEDs on
     digitalWrite(RED_LED, HIGH);
@@ -57,6 +91,7 @@ void startGame() {
     digitalWrite(BLUE_LED, LOW);
     delay(500);
   }
+  displayPattern();
 }
 
 // main loop
@@ -64,26 +99,26 @@ void loop() {
   // check for button presses, turn on associated LED
   val = digitalRead(INPUT_ONE);
   if (val == HIGH) {
-    c++;
+    btnCount++;
     digitalWrite(RED_LED, HIGH);
   }
   val = digitalRead(INPUT_TWO);
   if (val == HIGH) {
-    c++;
+    btnCount++;
     digitalWrite(YELLOW_LED, HIGH);
   }
   val = digitalRead(INPUT_THREE);
   if (val == HIGH) {
-    c++;
+    btnCount++;
     digitalWrite(GREEN_LED, HIGH);
   }
   val = digitalRead(INPUT_FOUR);
   if (val == HIGH) {
-    c++;
+    btnCount++;
     digitalWrite(BLUE_LED, HIGH);
   }
   // check if all buttons were pushed at once
-  if (c == 4) {
+  if (btnCount == 4) {
     Serial.println("ALL PRESSED!");
     delay(500);
     // all LEDs off
@@ -94,7 +129,7 @@ void loop() {
 
     startGame();
   }
-  c = 0;
+  btnCount = 0;
   // all LEDs off
   digitalWrite(RED_LED, LOW);
   digitalWrite(YELLOW_LED, LOW);
