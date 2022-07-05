@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <ezButton.h>
 #define RED_LED 8 // Red LED
 #define YELLOW_LED 9 // Yellow LED
 #define GREEN_LED 10 // Green LED
@@ -8,14 +9,19 @@
 #define INPUT_THREE 5 // Button 3
 #define INPUT_FOUR 6 // Button 4
 
-// int val = 0;
-int btnCount = 0; // count of button pushes per loop
+ezButton button1(3);
+ezButton button2(4);
+ezButton button3(5);
+ezButton button4(6);
+
 int level = 1; // count for number of lights in pattern
 int patternArr[100]; // pattern the user will repeat
-int inputCount = 0; // count of user inputs when guessin
+int inputCount = 0; // count of user inputs when guessing
+int btnCount = 0; // count of button presses at the same time
 int ledState = LOW;
 int buttonState;
 int lastButtonState = LOW;
+int btnTarget; // button being tracked for debounce
 
 unsigned long lastDebounceTime = 0;
 unsigned long debounceDelay = 50;
@@ -32,6 +38,12 @@ void setup() {
     pinMode(INPUT_TWO, INPUT);
     pinMode(INPUT_THREE, INPUT);
     pinMode(INPUT_FOUR, INPUT);
+
+    button1.setDebounceTime(50);
+    button2.setDebounceTime(50);
+    button3.setDebounceTime(50);
+    button4.setDebounceTime(50);
+
     Serial.begin(9600);
 }
 
@@ -113,77 +125,138 @@ void startGame() {
     displayPattern();
 }
 
+void gameWait() {
+    // check for button presses, turn on associated LED
+    if (button1.isPressed()) {
+        btnCount--;
+        digitalWrite(RED_LED, LOW);
+    }
+    if (button2.isPressed()) {
+        btnCount--;
+        digitalWrite(YELLOW_LED, LOW);
+    }
+    if (button3.isPressed()) {
+        btnCount--;
+        digitalWrite(GREEN_LED, LOW);
+    }
+    if (button4.isPressed()) {
+        btnCount--;
+        digitalWrite(BLUE_LED, LOW);
+    }
+
+    if (button1.isReleased()) {
+        btnCount++;
+        digitalWrite(RED_LED, HIGH);
+    }
+    if (button2.isReleased()) {
+        btnCount++;
+        digitalWrite(YELLOW_LED, HIGH);
+    }
+    if (button3.isReleased()) {
+        btnCount++;
+        digitalWrite(GREEN_LED, HIGH);
+    }
+    if (button4.isReleased()) {
+        btnCount++;
+        digitalWrite(BLUE_LED, HIGH);
+    }
+
+    // // check for button presses, turn on associated LED
+    // int val = digitalRead(INPUT_ONE);
+    // int btnCount = 0;
+    // if (val == HIGH) {
+    //     btnCount++;
+    //     digitalWrite(RED_LED, HIGH);
+    // }
+    // val = digitalRead(INPUT_TWO);
+    // if (val == HIGH) {
+    //     btnCount++;
+    //     digitalWrite(YELLOW_LED, HIGH);
+    // }
+    // val = digitalRead(INPUT_THREE);
+    // if (val == HIGH) {
+    //     btnCount++;
+    //     digitalWrite(GREEN_LED, HIGH);
+    // }
+    // val = digitalRead(INPUT_FOUR);
+    // if (val == HIGH) {
+    //     btnCount++;
+    //     digitalWrite(BLUE_LED, HIGH);
+    // }
+
+    // ledOff();
+
+    // check if all buttons were pushed at once
+    if (btnCount == 4) {
+        Serial.println("ALL PRESSED!");
+        delay(500);
+        startGame();
+    }
+}
+
+void gamePlay() {
+    // check for button presses, turn on associated LED
+    int val = digitalRead(INPUT_ONE);
+    if (val == HIGH) {
+        Serial.println("RED");
+        digitalWrite(RED_LED, HIGH);
+        btnTarget = 1;
+        delay(50);
+        ledOff();
+        return;
+    }
+    val = digitalRead(INPUT_TWO);
+    if (val == HIGH) {
+        Serial.println("YELLOW");
+        digitalWrite(YELLOW_LED, HIGH);
+        btnTarget = 2;
+        delay(50);
+        ledOff();
+        return;
+    }
+    val = digitalRead(INPUT_THREE);
+    if (val == HIGH) {
+        Serial.println("GREEN");
+        digitalWrite(GREEN_LED, HIGH);
+        btnTarget = 3;
+        delay(50);
+        ledOff();
+        return;
+    }
+    val = digitalRead(INPUT_FOUR);
+    if (val == HIGH) {
+        Serial.println("BLUE");
+        digitalWrite(BLUE_LED, HIGH);
+        btnTarget = 4;
+        delay(50);
+        ledOff();
+        return;
+    }
+}
+
 // main loop
 void loop() {
-    if (!running) {
-        // check for button presses, turn on associated LED
-        int val = digitalRead(INPUT_ONE);
-        if (val == HIGH) {
-            btnCount++;
-            digitalWrite(RED_LED, HIGH);
-        }
-        val = digitalRead(INPUT_TWO);
-        if (val == HIGH) {
-            btnCount++;
-            digitalWrite(YELLOW_LED, HIGH);
-        }
-        val = digitalRead(INPUT_THREE);
-        if (val == HIGH) {
-            btnCount++;
-            digitalWrite(GREEN_LED, HIGH);
-        }
-        val = digitalRead(INPUT_FOUR);
-        if (val == HIGH) {
-            btnCount++;
-            digitalWrite(BLUE_LED, HIGH);
-        }
-        // check if all buttons were pushed at once
-        if (btnCount == 4) {
-            Serial.println("ALL PRESSED!");
-            delay(500);
-            // all LEDs off
-            digitalWrite(RED_LED, LOW);
-            digitalWrite(YELLOW_LED, LOW);
-            digitalWrite(GREEN_LED, LOW);
-            digitalWrite(BLUE_LED, LOW);
+    button1.loop();
+    button2.loop();
+    button3.loop();
+    button4.loop();
 
-            startGame();
-        }
-    btnCount = 0;
-    ledOff();
+    // if (button1.isReleased()) {
+    //     Serial.println("RED");
+    // }
+    // if (button2.isReleased()) {
+    //     Serial.println("YELLOW");
+    // }
+    // if (button3.isReleased()) {
+    //     Serial.println("GREEN");
+    // }
+    // if (button4.isReleased()) {
+    //     Serial.println("BLUE");
+    // }
+
+    if (!running) {
+        gameWait();
     } else {
-        // check for button presses, turn on associated LED
-        int val = digitalRead(INPUT_ONE);
-        if (val == HIGH) {
-            digitalWrite(RED_LED, HIGH);
-            delay(50);
-            Serial.println("RED");
-            ledOff();
-            return;
-        }
-        val = digitalRead(INPUT_TWO);
-        if (val == HIGH) {
-            digitalWrite(YELLOW_LED, HIGH);
-            delay(50);
-            Serial.println("YELLOW");
-            ledOff();
-            return;
-        }
-        val = digitalRead(INPUT_THREE);
-        if (val == HIGH) {
-            digitalWrite(GREEN_LED, HIGH);
-            delay(50);
-            Serial.println("GREEN");
-            ledOff();
-            return;
-        }
-        val = digitalRead(INPUT_FOUR);
-        if (val == HIGH) {
-            digitalWrite(BLUE_LED, HIGH);
-            delay(50);
-            Serial.println("BLUE");
-            ledOff();
-            return;
-        }
+        gamePlay();
     }
 }
