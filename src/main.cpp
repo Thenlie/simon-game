@@ -75,6 +75,14 @@ void displayPattern() {
   }
 }
 
+void ledOff() {
+    // all LEDs off
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(YELLOW_LED, LOW);
+    digitalWrite(GREEN_LED, LOW);
+    digitalWrite(BLUE_LED, LOW);
+}
+
 void startGame() {
     running = true;
     startGameLights();
@@ -132,11 +140,38 @@ void loop() {
 
             startGame();
         }
-    }
     btnCount = 0;
-    // all LEDs off
-    digitalWrite(RED_LED, LOW);
-    digitalWrite(YELLOW_LED, LOW);
-    digitalWrite(GREEN_LED, LOW);
-    digitalWrite(BLUE_LED, LOW);
+    ledOff();
+    } else {
+        // check for button presses, turn on associated LED
+        val = digitalRead(INPUT_ONE);
+        if (val == HIGH) {
+            btnCount++;
+            digitalWrite(RED_LED, HIGH);
+            delay(50);
+            return;
+        }
+        val = digitalRead(INPUT_TWO);
+        if (val == HIGH) {
+            btnCount++;
+            digitalWrite(YELLOW_LED, HIGH);
+            delay(50);
+            return;
+        }
+        val = digitalRead(INPUT_THREE);
+        if (val == HIGH) {
+            btnCount++;
+            digitalWrite(GREEN_LED, HIGH);
+            delay(50);
+            return;
+        }
+        val = digitalRead(INPUT_FOUR);
+        if (val == HIGH) {
+            btnCount++;
+            digitalWrite(BLUE_LED, HIGH);
+            delay(50);
+            return;
+        }
+        ledOff();
+    }
 }
