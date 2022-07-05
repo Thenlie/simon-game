@@ -85,6 +85,14 @@ void displayPattern() {
   }
 }
 
+void ledOn() {
+    // all LEDs on
+    digitalWrite(RED_LED, HIGH);
+    digitalWrite(YELLOW_LED, HIGH);
+    digitalWrite(GREEN_LED, HIGH);
+    digitalWrite(BLUE_LED, HIGH);
+}
+
 void ledOff() {
     // all LEDs off
     digitalWrite(RED_LED, LOW);
@@ -102,17 +110,9 @@ void startGame() {
     startGameLights();
     // countdown flashes
     for (int i = 0; i < 3; i++) {
-        // all LEDs on
-        digitalWrite(RED_LED, HIGH);
-        digitalWrite(YELLOW_LED, HIGH);
-        digitalWrite(GREEN_LED, HIGH);
-        digitalWrite(BLUE_LED, HIGH);
+        ledOn();
         delay(500);
-        // all LEDs off
-        digitalWrite(RED_LED, LOW);
-        digitalWrite(YELLOW_LED, LOW);
-        digitalWrite(GREEN_LED, LOW);
-        digitalWrite(BLUE_LED, LOW);
+        ledOff();
         delay(500);
     }
     displayPattern();
