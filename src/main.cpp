@@ -8,10 +8,18 @@
 #define INPUT_THREE 5 // Button 3
 #define INPUT_FOUR 6 // Button 4
 
-int val = 0;
+// int val = 0;
 int btnCount = 0; // count of button pushes per loop
 int level = 1; // count for number of lights in pattern
 int patternArr[100]; // pattern the user will repeat
+int inputCount = 0; // count of user inputs when guessin
+int ledState = LOW;
+int buttonState;
+int lastButtonState = LOW;
+
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 50;
+
 bool running = false; // game state
 
 // run once on setup
@@ -24,9 +32,6 @@ void setup() {
     pinMode(INPUT_TWO, INPUT);
     pinMode(INPUT_THREE, INPUT);
     pinMode(INPUT_FOUR, INPUT);
-    for (int i = 0; i < 100; i++) {
-        patternArr[i] = random(4) + 1; 
-    }
     Serial.begin(9600);
 }
 
@@ -84,6 +89,10 @@ void ledOff() {
 }
 
 void startGame() {
+    // fill pattern array
+    for (int i = 0; i < 100; i++) {
+        patternArr[i] = random(4) + 1; 
+    }
     running = true;
     startGameLights();
     // countdown flashes
@@ -108,7 +117,7 @@ void startGame() {
 void loop() {
     if (!running) {
         // check for button presses, turn on associated LED
-        val = digitalRead(INPUT_ONE);
+        int val = digitalRead(INPUT_ONE);
         if (val == HIGH) {
             btnCount++;
             digitalWrite(RED_LED, HIGH);
@@ -144,34 +153,37 @@ void loop() {
     ledOff();
     } else {
         // check for button presses, turn on associated LED
-        val = digitalRead(INPUT_ONE);
+        int val = digitalRead(INPUT_ONE);
         if (val == HIGH) {
-            btnCount++;
             digitalWrite(RED_LED, HIGH);
             delay(50);
+            Serial.println("RED");
+            ledOff();
             return;
         }
         val = digitalRead(INPUT_TWO);
         if (val == HIGH) {
-            btnCount++;
             digitalWrite(YELLOW_LED, HIGH);
             delay(50);
+            Serial.println("YELLOW");
+            ledOff();
             return;
         }
         val = digitalRead(INPUT_THREE);
         if (val == HIGH) {
-            btnCount++;
             digitalWrite(GREEN_LED, HIGH);
             delay(50);
+            Serial.println("GREEN");
+            ledOff();
             return;
         }
         val = digitalRead(INPUT_FOUR);
         if (val == HIGH) {
-            btnCount++;
             digitalWrite(BLUE_LED, HIGH);
             delay(50);
+            Serial.println("BLUE");
+            ledOff();
             return;
         }
-        ledOff();
     }
 }
