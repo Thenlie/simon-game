@@ -16,6 +16,7 @@ ezButton btn4(6);
 
 int level = 1; // count for number of lights in pattern
 int patternArr[100]; // pattern the user will repeat
+int inputArr[100]; // users input throughout the game
 int inputCount = 0; // count of user inputs when guessing
 int btnCount = 0; // count of button presses at the same time
 
@@ -102,9 +103,14 @@ void ledOff() {
 }
 
 void startGame() {
+    // reset variables
+    level = 1;
+    inputCount = 0;
+    btnCount = 0;
     // fill pattern array
     for (int i = 0; i < 100; i++) {
         patternArr[i] = random(4) + 1; 
+        inputArr[i] = 0;
     }
     running = true;
     startGameLights();
@@ -167,20 +173,28 @@ void checkButtonPress() {
 }
 
 void checkSingleButtonPress() {
-    // check for button presses, turn on associated LED
+    // check for button presses, turn on associated LED and push to inputArr
     if (btn1.isReleased() && !btn2.getState() && !btn3.getState() && !btn4.getState()) {
-        btnCount++;
+        inputArr[inputCount] = 1;
+        inputCount++;
         digitalWrite(RED_LED, HIGH);
     } if (btn2.isReleased() && !btn1.getState() && !btn3.getState() && !btn4.getState()) {
-        btnCount++;
+        inputArr[inputCount] = 2;
+        inputCount++;
         digitalWrite(YELLOW_LED, HIGH);
     } if (btn3.isReleased() && !btn1.getState() && !btn2.getState() && !btn4.getState()) {
-        btnCount++;
+        inputArr[inputCount] = 3;
+        inputCount++;
         digitalWrite(GREEN_LED, HIGH);
     } if (btn4.isReleased() && !btn1.getState() && !btn2.getState() && !btn3.getState()) {
-        btnCount++;
+        inputArr[inputCount] = 4;
+        inputCount++;
         digitalWrite(BLUE_LED, HIGH);
     }
+}
+
+void gameOver() {
+    running = false;
 }
 
 void gameWait() {
@@ -196,6 +210,17 @@ void gameWait() {
 void gamePlay() {
     checkSingleButtonPress();
     checkButtonRelease();
+    if (inputCount == level) {
+        for (int i = 0; i < level; i++) {
+            if (inputArr[i] = patternArr[i]) {
+                continue;
+            } else {
+                gameOver();
+            }
+        }
+        // correct guess
+        inputCount = 0;
+    }
 }
 
 // main loop
