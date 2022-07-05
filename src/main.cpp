@@ -18,13 +18,6 @@ int level = 1; // count for number of lights in pattern
 int patternArr[100]; // pattern the user will repeat
 int inputCount = 0; // count of user inputs when guessing
 int btnCount = 0; // count of button presses at the same time
-int ledState = LOW;
-int buttonState;
-int lastButtonState = LOW;
-int btnTarget; // button being tracked for debounce
-
-unsigned long lastDebounceTime = 0;
-unsigned long debounceDelay = 50;
 
 bool running = false; // game state
 
@@ -125,113 +118,84 @@ void startGame() {
     displayPattern();
 }
 
-void gameWait() {
-    // check for button presses, turn on associated LED
+void checkButtonRelease() {
+    // check for button releases, turn off associated LED
     if (button1.isPressed()) {
         btnCount--;
         digitalWrite(RED_LED, LOW);
-    }
-    if (button2.isPressed()) {
+    } if (button2.isPressed()) {
         btnCount--;
         digitalWrite(YELLOW_LED, LOW);
-    }
-    if (button3.isPressed()) {
+    } if (button3.isPressed()) {
         btnCount--;
         digitalWrite(GREEN_LED, LOW);
-    }
-    if (button4.isPressed()) {
+    } if (button4.isPressed()) {
         btnCount--;
         digitalWrite(BLUE_LED, LOW);
     }
-
-    if (button1.isReleased()) {
+    // check for button presses, turn on associated LED
+    if (button1.isReleased() && !button2.getState() && !button3.getState() && !button4.getState()) {
         btnCount++;
         digitalWrite(RED_LED, HIGH);
-    }
-    if (button2.isReleased()) {
+    } if (button2.isReleased() && !button1.getState() && !button3.getState() && !button4.getState()) {
         btnCount++;
         digitalWrite(YELLOW_LED, HIGH);
-    }
-    if (button3.isReleased()) {
+    } if (button3.isReleased() && !button1.getState() && !button2.getState() && !button4.getState()) {
         btnCount++;
         digitalWrite(GREEN_LED, HIGH);
-    }
-    if (button4.isReleased()) {
+    } if (button4.isReleased() && !button1.getState() && !button2.getState() && !button3.getState()) {
         btnCount++;
         digitalWrite(BLUE_LED, HIGH);
     }
+}
 
-    // // check for button presses, turn on associated LED
-    // int val = digitalRead(INPUT_ONE);
-    // int btnCount = 0;
-    // if (val == HIGH) {
-    //     btnCount++;
-    //     digitalWrite(RED_LED, HIGH);
-    // }
-    // val = digitalRead(INPUT_TWO);
-    // if (val == HIGH) {
-    //     btnCount++;
-    //     digitalWrite(YELLOW_LED, HIGH);
-    // }
-    // val = digitalRead(INPUT_THREE);
-    // if (val == HIGH) {
-    //     btnCount++;
-    //     digitalWrite(GREEN_LED, HIGH);
-    // }
-    // val = digitalRead(INPUT_FOUR);
-    // if (val == HIGH) {
-    //     btnCount++;
-    //     digitalWrite(BLUE_LED, HIGH);
-    // }
+void checkButtonPress() {
+    // check for button presses, turn on associated LED
+    if (button1.isReleased()) {
+        btnCount++;
+        digitalWrite(RED_LED, HIGH);
+    } if (button2.isReleased()) {
+        btnCount++;
+        digitalWrite(YELLOW_LED, HIGH);
+    } if (button3.isReleased()) {
+        btnCount++;
+        digitalWrite(GREEN_LED, HIGH);
+    } if (button4.isReleased()) {
+        btnCount++;
+        digitalWrite(BLUE_LED, HIGH);
+    }
+}
 
-    // ledOff();
+void checkSingleButtonPress() {
+    // check for button presses, turn on associated LED
+    if (button1.isReleased() && !button2.getState() && !button3.getState() && !button4.getState()) {
+        btnCount++;
+        digitalWrite(RED_LED, HIGH);
+    } if (button2.isReleased() && !button1.getState() && !button3.getState() && !button4.getState()) {
+        btnCount++;
+        digitalWrite(YELLOW_LED, HIGH);
+    } if (button3.isReleased() && !button1.getState() && !button2.getState() && !button4.getState()) {
+        btnCount++;
+        digitalWrite(GREEN_LED, HIGH);
+    } if (button4.isReleased() && !button1.getState() && !button2.getState() && !button3.getState()) {
+        btnCount++;
+        digitalWrite(BLUE_LED, HIGH);
+    }
+}
 
-    // check if all buttons were pushed at once
+void gameWait() {
+    checkButtonPress();
+    checkButtonRelease();
+    // check if all buttons were pushed at once to start game
     if (btnCount == 4) {
-        Serial.println("ALL PRESSED!");
         delay(500);
         startGame();
     }
 }
 
 void gamePlay() {
-    // check for button presses, turn on associated LED
-    int val = digitalRead(INPUT_ONE);
-    if (val == HIGH) {
-        Serial.println("RED");
-        digitalWrite(RED_LED, HIGH);
-        btnTarget = 1;
-        delay(50);
-        ledOff();
-        return;
-    }
-    val = digitalRead(INPUT_TWO);
-    if (val == HIGH) {
-        Serial.println("YELLOW");
-        digitalWrite(YELLOW_LED, HIGH);
-        btnTarget = 2;
-        delay(50);
-        ledOff();
-        return;
-    }
-    val = digitalRead(INPUT_THREE);
-    if (val == HIGH) {
-        Serial.println("GREEN");
-        digitalWrite(GREEN_LED, HIGH);
-        btnTarget = 3;
-        delay(50);
-        ledOff();
-        return;
-    }
-    val = digitalRead(INPUT_FOUR);
-    if (val == HIGH) {
-        Serial.println("BLUE");
-        digitalWrite(BLUE_LED, HIGH);
-        btnTarget = 4;
-        delay(50);
-        ledOff();
-        return;
-    }
+    checkSingleButtonPress();
+    checkButtonRelease();
 }
 
 // main loop
@@ -240,19 +204,6 @@ void loop() {
     button2.loop();
     button3.loop();
     button4.loop();
-
-    // if (button1.isReleased()) {
-    //     Serial.println("RED");
-    // }
-    // if (button2.isReleased()) {
-    //     Serial.println("YELLOW");
-    // }
-    // if (button3.isReleased()) {
-    //     Serial.println("GREEN");
-    // }
-    // if (button4.isReleased()) {
-    //     Serial.println("BLUE");
-    // }
 
     if (!running) {
         gameWait();
