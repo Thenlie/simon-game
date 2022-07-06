@@ -17,6 +17,8 @@ int inputArr[100]; // users input throughout the game
 int inputCount = 0; // count of user inputs when guessing
 int btnCount = 0; // count of button presses at the same time
 
+long randNum;
+
 bool running = false; // game state
 
 // run once on setup
@@ -37,6 +39,7 @@ void setup() {
     btn4.setCountMode(COUNT_BOTH);
 
     Serial.begin(9600);
+    randomSeed(analogRead(A0));
 }
 
 void ledOn() {
@@ -198,8 +201,12 @@ void startGame() {
     btnCount = 0;
     // fill pattern & input array
     for (int i = 0; i < 100; i++) {
-        patternArr[i] = random(4) + 1; 
+        randNum = random(1, 5);
+        patternArr[i] = randNum; 
         inputArr[i] = 0;
+    }
+    for (int i = 0; i < 100; i++) {
+        Serial.println(patternArr[i]);
     }
     running = true;
     startGameLights();
