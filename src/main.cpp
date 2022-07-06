@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <header.h>
 #include <ezButton.h>
 
 #define RED_LED 8 // Red LED
@@ -16,9 +17,7 @@ int patternArr[100]; // pattern the user will repeat
 int inputArr[100]; // users input throughout the game
 int inputCount = 0; // count of user inputs when guessing
 int btnCount = 0; // count of button presses at the same time
-
 long randNum;
-
 bool running = false; // game state
 
 // run once on setup
@@ -42,39 +41,7 @@ void setup() {
     randomSeed(analogRead(A0));
 }
 
-void ledOn() {
-    // all LEDs on
-    digitalWrite(RED_LED, HIGH);
-    digitalWrite(YELLOW_LED, HIGH);
-    digitalWrite(GREEN_LED, HIGH);
-    digitalWrite(BLUE_LED, HIGH);
-}
-
-void ledOff() {
-    // all LEDs off
-    digitalWrite(RED_LED, LOW);
-    digitalWrite(YELLOW_LED, LOW);
-    digitalWrite(GREEN_LED, LOW);
-    digitalWrite(BLUE_LED, LOW);
-}
-
-void startGameLights() {
-    for (int i = 0; i < 5; i++) {
-        digitalWrite(RED_LED, HIGH);
-        delay(75);
-        digitalWrite(RED_LED, LOW);
-        digitalWrite(YELLOW_LED, HIGH);
-        delay(75);
-        digitalWrite(YELLOW_LED, LOW);
-        digitalWrite(GREEN_LED, HIGH);
-        delay(75);
-        digitalWrite(GREEN_LED, LOW);
-        digitalWrite(BLUE_LED, HIGH);
-        delay(75);
-        digitalWrite(BLUE_LED, LOW);
-    }
-}
-
+// show pattern to be repeated by user
 void displayPattern() {
     ledOff();
     Serial.print("Current level: ");
@@ -107,8 +74,8 @@ void displayPattern() {
     }
 }
 
+// check for button presses, turn on associated LED
 void checkButtonPress() {
-    // check for button presses, turn on associated LED
     if (btn1.isPressed()) {
         if (!running && btn1.getCount() == 1) {
             btnCount++;
@@ -160,8 +127,8 @@ void checkButtonPress() {
     }
 }
 
+// check for button releases, turn off associated LED
 void checkButtonRelease() {
-    // check for button releases, turn off associated LED
     if (btn1.isReleased()) {
         if (!running) {
             btnCount--;
@@ -194,7 +161,6 @@ void checkButtonRelease() {
 }
 
 void startGame() {
-    checkButtonRelease();
     // reset variables
     level = 1;
     inputCount = 0;
@@ -208,7 +174,6 @@ void startGame() {
     for (int i = 0; i < 100; i++) {
         Serial.println(patternArr[i]);
     }
-    running = true;
     startGameLights();
     // countdown flashes
     for (int i = 0; i < 3; i++) {
@@ -218,6 +183,7 @@ void startGame() {
         delay(500);
     }
     Serial.println("Start Game!");
+    running = true;
     displayPattern();
 }
 
@@ -226,6 +192,7 @@ void gameOver() {
     running = false;
     btnCount = 0;
     Serial.println("Game Over!");
+    // red light flashes
     for (int i = 0; i < 7; i++) {
         digitalWrite(RED_LED, HIGH);
         delay(100);
@@ -234,6 +201,7 @@ void gameOver() {
     }
 }
 
+// waiting for game to start
 void gameWait() {
     checkButtonPress();
     checkButtonRelease();
@@ -246,6 +214,7 @@ void gameWait() {
     }
 }
 
+// game in progress
 void gamePlay() {
     checkButtonRelease();
     checkButtonPress();
