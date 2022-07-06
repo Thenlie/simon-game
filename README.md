@@ -1,12 +1,4 @@
-# Arduino Simon Memory Game
-
-## Description
-
-A Simon memory game built on Arduino using PlatformIO. This was my first real independent Arduino project done without any tutorials. The ezButton library is used to handle button debounce. 
-
-This project was built on the Arduino Uno R3 but should work on most arduino boards. It takes 4 inputs and 4 outputs. Any simple electronics kits should include the components needed. A complete bill of materials can be found in the `/resources` directory of this project as well as a schematic and breadboard layout. 
-
-## Technology Stack
+# Arduino Simon Memory Game ![Project License Badge](https://img.shields.io/badge/license-MIT-brightgreen) ![Project Tech Badge](https://img.shields.io/badge/platform-Arduino-informational) 
 
 <div align="center">
 
@@ -16,7 +8,21 @@ This project was built on the Arduino Uno R3 but should work on most arduino boa
 
 </div>
 
+## Description
+
+A Simon memory game built on Arduino using PlatformIO. This was my first real independent Arduino project done without any tutorials. The ezButton library is used to handle button debounce. 
+
+This project was built on the Arduino Uno R3 but should work on most arduino boards. It takes 4 inputs and 4 outputs. Any simple electronics kits should include the components needed. A complete bill of materials can be found in the `/resources` directory of this project as well as a schematic and breadboard layout. 
+
 ***
+
+ ## Table of Contents
+
+  * [Usage](#usage)
+  * [Breadboard Layout](#breadboard)
+  * [Bill of Materials](#bom)
+  * [License](#license)
+  * [Questions](#questions)
 
 ## Usage
 
@@ -26,11 +32,23 @@ From there you will need to build the hardware! Follow the breadboard layout bel
 
 > NOTE: If the game does not start when you are pressing all buttons, reset your Arduino. 
 
-## Breadboard Layout
+## Breadboard Layout <a id="breadboard"></a>
 
 ![Breadboard Layout](https://github.com/Thenlie/simon-game/blob/main/resources/breadboard-layout.PNG) 
 
 > NOTE: This layout and a schematic can be found in the `/resources` directory of this project. 
+
+## Bill of Materials <a id="bom"></a>
+
+|Name          |Quantity|Component      |
+|--------------|--------|---------------|
+|D1            |1       |Red LED        |
+|D2            |1       |Yellow LED     |
+|D3            |1       |Green LED      |
+|D4            |1       |Blue LED       |
+|S1, S2, S3, S4|4       | Pushbutton    |
+|U1            |1       | Arduino Uno R3|
+|R1, R2, R3, R4|4       |220 Ω Resistor |
 
 ## License
 
