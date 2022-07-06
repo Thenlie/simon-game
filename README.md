@@ -2,7 +2,9 @@
 
 ## Description
 
-A Simon memory game built on Arduino using PlatformIO. This was my first real independent Arduino project done without any tutorials. 
+A Simon memory game built on Arduino using PlatformIO. This was my first real independent Arduino project done without any tutorials. The ezButton library is used to handle button debounce. 
+
+This project was built on the Arduino Uno R3 but should work on most arduino boards. It takes 4 inputs and 4 outputs. Any simple electronics kits should include the components needed. A complete bill of materials can be found in the `/resources` directory of this project as well as a schematic and breadboard layout. 
 
 ## Technology Stack
 
@@ -17,6 +19,12 @@ A Simon memory game built on Arduino using PlatformIO. This was my first real in
 ***
 
 ## Usage
+
+The only files you need to run on the arduino are located in the `/src` directory of the project. You can clone the repository directly or simply copy the files from `/src` and paste them into your own PlatformIO project. You can find more information about PlatformIO [here](https://platformio.org/). 
+
+From there you will need to build the hardware! Follow the breadboard layout below or the schematic located in the `/resources` directory. Once you have the hardware built, connect your arduino to your computer and upload the code. Once uploaded you should be able to press the buttons and see the LEDs come on. To start the game, press all four LEDs at the same time. 
+
+> NOTE: If the game does not start when you are pressing all buttons, reset your Arduino. 
 
 ## Breadboard Layout
 
