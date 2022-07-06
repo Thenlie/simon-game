@@ -4,10 +4,6 @@
 #define YELLOW_LED 9 // Yellow LED
 #define GREEN_LED 10 // Green LED
 #define BLUE_LED 11 // Blue LED
-#define INPUT_ONE 3 // Button 1
-#define INPUT_TWO 4 // Button 2
-#define INPUT_THREE 5 // Button 3
-#define INPUT_FOUR 6 // Button 4
 
 ezButton btn1(3);
 ezButton btn2(4);
@@ -28,10 +24,6 @@ void setup() {
     pinMode(YELLOW_LED, OUTPUT);
     pinMode(GREEN_LED, OUTPUT);
     pinMode(BLUE_LED, OUTPUT);
-    pinMode(INPUT_ONE, INPUT);
-    pinMode(INPUT_TWO, INPUT);
-    pinMode(INPUT_THREE, INPUT);
-    pinMode(INPUT_FOUR, INPUT);
 
     btn1.setDebounceTime(50);
     btn2.setDebounceTime(50);
@@ -59,31 +51,33 @@ void startGameLights() {
 }
 
 void displayPattern() {
+    Serial.print("Current level: ");
+    Serial.println(level);
     for (int i = 0; i < level; i++) {
         switch (patternArr[i]) {
             case 1:
                 digitalWrite(RED_LED, HIGH);
-                delay(100);
+                delay(300);
                 digitalWrite(RED_LED, LOW);
                 break;
             case 2:
                 digitalWrite(YELLOW_LED, HIGH);
-                delay(100);
+                delay(300);
                 digitalWrite(YELLOW_LED, LOW);
                 break;
             case 3:
                 digitalWrite(GREEN_LED, HIGH);
-                delay(100);
+                delay(300);
                 digitalWrite(GREEN_LED, LOW);
                 break;
             case 4:
                 digitalWrite(BLUE_LED, HIGH);
-                delay(100);
+                delay(300);
                 digitalWrite(BLUE_LED, LOW);
                 break;
         }
-    delay(50);
-  }
+        delay(300);
+    }
 }
 
 void ledOn() {
@@ -102,12 +96,89 @@ void ledOff() {
     digitalWrite(BLUE_LED, LOW);
 }
 
+void checkButtonPress() {
+    // check for button presses, turn on associated LED
+    if (btn1.isPressed()) {
+        if (!running) {
+            btnCount++;
+            digitalWrite(RED_LED, HIGH);
+        } else if (btn2.getState() && btn3.getState() && btn4.getState()) {
+            digitalWrite(RED_LED, HIGH);
+            inputArr[inputCount] = 1;
+            inputCount++;
+            Serial.println("Red");
+        }
+        Serial.println("Input was Red");
+    } if (btn2.isPressed()) {
+        if (!running) {
+            btnCount++;
+            digitalWrite(YELLOW_LED, HIGH);
+        } else if (btn1.getState() && btn3.getState() && btn4.getState()) {
+            digitalWrite(YELLOW_LED, HIGH);
+            inputArr[inputCount] = 2;
+            inputCount++;
+        }
+        Serial.println("Input was Yellow");  
+    } if (btn3.isPressed()) {
+        if (!running) {
+            btnCount++;
+            digitalWrite(GREEN_LED, HIGH);
+        } else if (btn1.getState() && btn2.getState() && btn4.getState()) {
+            digitalWrite(GREEN_LED, HIGH);
+            inputArr[inputCount] = 3;
+            inputCount++;
+            Serial.println("Green");
+        }
+        Serial.println("Input was Green");
+    } if (btn4.isPressed()) {
+        if (!running) {
+            btnCount++;
+            digitalWrite(BLUE_LED, HIGH);
+        } else if (btn1.getState() && btn2.getState() && btn3.getState()) {
+            digitalWrite(BLUE_LED, HIGH);
+            inputArr[inputCount] = 4;
+            inputCount++;
+        }
+        Serial.println("Input was Blue");
+    }
+}
+
+void checkButtonRelease() {
+    // check for button releases, turn off associated LED
+    if (btn1.isReleased()) {
+        if (!running) {
+            btnCount--;
+        }
+        digitalWrite(RED_LED, LOW);
+        Serial.println("Release was Red");
+    } if (btn2.isReleased()) {
+        if (!running) {
+            btnCount--;
+        }
+        digitalWrite(YELLOW_LED, LOW);
+        Serial.println("Release was Yellow");
+    } if (btn3.isReleased()) {
+        if (!running) {
+            btnCount--;
+        }
+        digitalWrite(GREEN_LED, LOW);
+        Serial.println("Release was Green");
+    } if (btn4.isReleased()) {
+        if (!running) {
+            btnCount--;
+        }
+        digitalWrite(BLUE_LED, LOW);
+        Serial.println("Release was Blue");
+    }
+}
+
 void startGame() {
+    checkButtonRelease();
     // reset variables
-    level = 1;
+    level = 5;
     inputCount = 0;
     btnCount = 0;
-    // fill pattern array
+    // fill pattern & input array
     for (int i = 0; i < 100; i++) {
         patternArr[i] = random(4) + 1; 
         inputArr[i] = 0;
@@ -121,80 +192,20 @@ void startGame() {
         ledOff();
         delay(500);
     }
+    Serial.println("Start Game!");
     displayPattern();
-}
-
-void checkButtonRelease() {
-    // check for button releases, turn off associated LED
-    if (btn1.isPressed()) {
-        btnCount--;
-        digitalWrite(RED_LED, LOW);
-    } if (btn2.isPressed()) {
-        btnCount--;
-        digitalWrite(YELLOW_LED, LOW);
-    } if (btn3.isPressed()) {
-        btnCount--;
-        digitalWrite(GREEN_LED, LOW);
-    } if (btn4.isPressed()) {
-        btnCount--;
-        digitalWrite(BLUE_LED, LOW);
-    }
-    // check for button presses, turn on associated LED
-    if (btn1.isReleased() && !btn2.getState() && !btn3.getState() && !btn4.getState()) {
-        btnCount++;
-        digitalWrite(RED_LED, HIGH);
-    } if (btn2.isReleased() && !btn1.getState() && !btn3.getState() && !btn4.getState()) {
-        btnCount++;
-        digitalWrite(YELLOW_LED, HIGH);
-    } if (btn3.isReleased() && !btn1.getState() && !btn2.getState() && !btn4.getState()) {
-        btnCount++;
-        digitalWrite(GREEN_LED, HIGH);
-    } if (btn4.isReleased() && !btn1.getState() && !btn2.getState() && !btn3.getState()) {
-        btnCount++;
-        digitalWrite(BLUE_LED, HIGH);
-    }
-}
-
-void checkButtonPress() {
-    // check for button presses, turn on associated LED
-    if (btn1.isReleased()) {
-        btnCount++;
-        digitalWrite(RED_LED, HIGH);
-    } if (btn2.isReleased()) {
-        btnCount++;
-        digitalWrite(YELLOW_LED, HIGH);
-    } if (btn3.isReleased()) {
-        btnCount++;
-        digitalWrite(GREEN_LED, HIGH);
-    } if (btn4.isReleased()) {
-        btnCount++;
-        digitalWrite(BLUE_LED, HIGH);
-    }
-}
-
-void checkSingleButtonPress() {
-    // check for button presses, turn on associated LED and push to inputArr
-    if (btn1.isReleased() && !btn2.getState() && !btn3.getState() && !btn4.getState()) {
-        inputArr[inputCount] = 1;
-        inputCount++;
-        digitalWrite(RED_LED, HIGH);
-    } if (btn2.isReleased() && !btn1.getState() && !btn3.getState() && !btn4.getState()) {
-        inputArr[inputCount] = 2;
-        inputCount++;
-        digitalWrite(YELLOW_LED, HIGH);
-    } if (btn3.isReleased() && !btn1.getState() && !btn2.getState() && !btn4.getState()) {
-        inputArr[inputCount] = 3;
-        inputCount++;
-        digitalWrite(GREEN_LED, HIGH);
-    } if (btn4.isReleased() && !btn1.getState() && !btn2.getState() && !btn3.getState()) {
-        inputArr[inputCount] = 4;
-        inputCount++;
-        digitalWrite(BLUE_LED, HIGH);
-    }
 }
 
 void gameOver() {
     running = false;
+    btnCount = 0;
+    Serial.println("Game Over!");
+    for (int i = 0; i < 7; i++) {
+        digitalWrite(RED_LED, HIGH);
+        delay(100);
+        digitalWrite(RED_LED, LOW);
+        delay(100);
+    }
 }
 
 void gameWait() {
@@ -202,24 +213,34 @@ void gameWait() {
     checkButtonRelease();
     // check if all buttons were pushed at once to start game
     if (btnCount == 4) {
-        delay(500);
+        Serial.println("All Buttons Pressed!");
+        ledOff();
+        delay(1000);
         startGame();
     }
 }
 
 void gamePlay() {
-    checkSingleButtonPress();
     checkButtonRelease();
+    checkButtonPress();
     if (inputCount == level) {
+        Serial.println("Checking guess...");
         for (int i = 0; i < level; i++) {
-            if (inputArr[i] = patternArr[i]) {
+            Serial.println(inputArr[i]);
+            Serial.println(patternArr[i]);
+            if (inputArr[i] == patternArr[i]) {
                 continue;
             } else {
                 gameOver();
+                break;
             }
         }
-        // correct guess
-        inputCount = 0;
+        if (running) {
+            // correct pattern was entered
+            level++;
+            inputCount = 0;
+            displayPattern();
+        }
     }
 }
 
@@ -230,9 +251,9 @@ void loop() {
     btn3.loop();
     btn4.loop();
 
-    if (!running) {
-        gameWait();
-    } else {
+    if (running) {
         gamePlay();
+    } else {
+        gameWait();
     }
 }
