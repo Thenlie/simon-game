@@ -201,6 +201,20 @@ void gameOver() {
     }
 }
 
+gameWin() {
+    ledOff();
+    running = false;
+    btnCount = 0;
+    Serial.println("You Win!");
+    // green light flashes
+    for (int i = 0; i < 7; i++) {
+        digitalWrite(GREEN_LED, HIGH);
+        delay(100);
+        digitalWrite(GREEN_LED, LOW);
+        delay(100);
+    }
+}
+
 // waiting for game to start
 void gameWait() {
     checkButtonPress();
@@ -232,9 +246,14 @@ void gamePlay() {
         }
         if (running) {
             // correct pattern was entered
-            level++;
-            inputCount = 0;
-            displayPattern();
+            if (level = 99) {
+                gameWin();
+                break;
+            } else {
+                level++;
+                inputCount = 0;
+                displayPattern();
+            }
         }
     }
 }
