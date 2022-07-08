@@ -205,15 +205,7 @@ void gameOver() {
     running = false;
     btnCount = 0;
     Serial.println("Game Over!");
-    // red light flashes
-    for (int i = 0; i < 7; i++) {
-        tone(BUZZER, 400);
-        digitalWrite(RED_LED, HIGH);
-        delay(100);
-        noTone(BUZZER);
-        digitalWrite(RED_LED, LOW);
-        delay(100);
-    }
+    gameOverLights();
 }
 
 void gameWin() {
@@ -221,15 +213,7 @@ void gameWin() {
     running = false;
     btnCount = 0;
     Serial.println("You Win!");
-    // green light flashes
-    for (int i = 0; i < 7; i++) {
-        tone(BUZZER, 900);
-        digitalWrite(GREEN_LED, HIGH);
-        delay(100);
-        noTone(BUZZER);
-        digitalWrite(GREEN_LED, LOW);
-        delay(100);
-    }
+    gameWinLights();
 }
 
 // waiting for game to start
