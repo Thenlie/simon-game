@@ -207,8 +207,10 @@ void gameOver() {
     Serial.println("Game Over!");
     // red light flashes
     for (int i = 0; i < 7; i++) {
+        tone(BUZZER, 400);
         digitalWrite(RED_LED, HIGH);
         delay(100);
+        noTone(BUZZER);
         digitalWrite(RED_LED, LOW);
         delay(100);
     }
@@ -221,8 +223,10 @@ void gameWin() {
     Serial.println("You Win!");
     // green light flashes
     for (int i = 0; i < 7; i++) {
+        tone(BUZZER, 900);
         digitalWrite(GREEN_LED, HIGH);
         delay(100);
+        noTone(BUZZER);
         digitalWrite(GREEN_LED, LOW);
         delay(100);
     }
@@ -239,6 +243,8 @@ void gameWait() {
         noTone(BUZZER);
         delay(1000);
         startGame();
+    } else if (btnCount > 4 || btnCount < 0) {
+        btnCount = 0;
     }
 }
 
