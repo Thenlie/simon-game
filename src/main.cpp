@@ -201,7 +201,7 @@ void gameOver() {
     }
 }
 
-gameWin() {
+void gameWin() {
     ledOff();
     running = false;
     btnCount = 0;
@@ -246,9 +246,8 @@ void gamePlay() {
         }
         if (running) {
             // correct pattern was entered
-            if (level = 99) {
+            if (level == 99) {
                 gameWin();
-                break;
             } else {
                 level++;
                 inputCount = 0;
