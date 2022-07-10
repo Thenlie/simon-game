@@ -49,6 +49,8 @@ From there you will need to build the hardware! Follow the breadboard layout bel
 |S1, S2, S3, S4|4       | Pushbutton    |
 |U1            |1       | Arduino Uno R3|
 |R1, R2, R3, R4|4       |220 Ω Resistor |
+|R5            |1       |100 Ω Resistor |
+|PIEZO1        |1       |Piezo          |
 
 ## License
 
