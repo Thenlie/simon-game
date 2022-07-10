@@ -6,6 +6,7 @@
 #define YELLOW_LED 9 // Yellow LED
 #define GREEN_LED 10 // Green LED
 #define BLUE_LED 11 // Blue LED
+#define BUZZER 2
 
 ezButton btn1(3);
 ezButton btn2(4);
@@ -26,6 +27,7 @@ void setup() {
     pinMode(YELLOW_LED, OUTPUT);
     pinMode(GREEN_LED, OUTPUT);
     pinMode(BLUE_LED, OUTPUT);
+    pinMode(BUZZER, OUTPUT);
 
     btn1.setDebounceTime(50);
     btn2.setDebounceTime(50);
@@ -43,7 +45,6 @@ void setup() {
 
 // show pattern to be repeated by user
 void displayPattern() {
-    ledOff();
     Serial.print("Current level: ");
     Serial.println(level);
     delay(300);
@@ -51,23 +52,31 @@ void displayPattern() {
         switch (patternArr[i]) {
             case 1:
                 digitalWrite(RED_LED, HIGH);
+                tone(BUZZER, 500);
                 delay(300);
                 digitalWrite(RED_LED, LOW);
+                noTone(BUZZER);
                 break;
             case 2:
                 digitalWrite(YELLOW_LED, HIGH);
+                tone(BUZZER, 600);
                 delay(300);
                 digitalWrite(YELLOW_LED, LOW);
+                noTone(BUZZER);
                 break;
             case 3:
                 digitalWrite(GREEN_LED, HIGH);
+                tone(BUZZER, 700);
                 delay(300);
                 digitalWrite(GREEN_LED, LOW);
+                noTone(BUZZER);
                 break;
             case 4:
                 digitalWrite(BLUE_LED, HIGH);
+                tone(BUZZER, 800);
                 delay(300);
                 digitalWrite(BLUE_LED, LOW);
+                noTone(BUZZER);
                 break;
         }
         delay(300);
@@ -79,9 +88,9 @@ void checkButtonPress() {
     if (btn1.isPressed()) {
         if (!running && btn1.getCount() == 1) {
             btnCount++;
+        } if (btn2.getState() && btn3.getState() && btn4.getState() && btn1.getCount() == 1) {
             digitalWrite(RED_LED, HIGH);
-        } else if (btn2.getState() && btn3.getState() && btn4.getState() && btn1.getCount() == 1) {
-            digitalWrite(RED_LED, HIGH);
+            tone(BUZZER, 500);
             delay(100);
             inputArr[inputCount] = 1;
             inputCount++;
@@ -91,9 +100,9 @@ void checkButtonPress() {
     } if (btn2.isPressed()) {
         if (!running && btn2.getCount() == 1) {
             btnCount++;
+        } if (btn1.getState() && btn3.getState() && btn4.getState() && btn2.getCount() == 1) {
             digitalWrite(YELLOW_LED, HIGH);
-        } else if (btn1.getState() && btn3.getState() && btn4.getState() && btn2.getCount() == 1) {
-            digitalWrite(YELLOW_LED, HIGH);
+            tone(BUZZER, 600);
             delay(100);
             inputArr[inputCount] = 2;
             inputCount++;
@@ -103,9 +112,9 @@ void checkButtonPress() {
     } if (btn3.isPressed()) {
         if (!running && btn3.getCount() == 1) {
             btnCount++;
+        } if (btn1.getState() && btn2.getState() && btn4.getState() && btn3.getCount() == 1) {
             digitalWrite(GREEN_LED, HIGH);
-        } else if (btn1.getState() && btn2.getState() && btn4.getState() && btn3.getCount() == 1) {
-            digitalWrite(GREEN_LED, HIGH);
+            tone(BUZZER, 700);
             delay(100);
             inputArr[inputCount] = 3;
             inputCount++;
@@ -115,9 +124,9 @@ void checkButtonPress() {
     } if (btn4.isPressed()) {
         if (!running && btn4.getCount() == 1) {
             btnCount++;
+        } if (btn1.getState() && btn2.getState() && btn3.getState() && btn4.getCount() == 1) {
             digitalWrite(BLUE_LED, HIGH);
-        } else if (btn1.getState() && btn2.getState() && btn3.getState() && btn4.getCount() == 1) {
-            digitalWrite(BLUE_LED, HIGH);
+            tone(BUZZER, 800);
             delay(100);
             inputArr[inputCount] = 4;
             inputCount++;
@@ -130,6 +139,7 @@ void checkButtonPress() {
 // check for button releases, turn off associated LED
 void checkButtonRelease() {
     if (btn1.isReleased()) {
+        noTone(BUZZER);
         if (!running) {
             btnCount--;
         }
@@ -137,6 +147,7 @@ void checkButtonRelease() {
         digitalWrite(RED_LED, LOW);
         Serial.println("Release was Red");
     } if (btn2.isReleased()) {
+        noTone(BUZZER);
         if (!running) {
             btnCount--;
         }
@@ -144,6 +155,7 @@ void checkButtonRelease() {
         digitalWrite(YELLOW_LED, LOW);
         Serial.println("Release was Yellow");
     } if (btn3.isReleased()) {
+        noTone(BUZZER);
         if (!running) {
             btnCount--;
         }
@@ -151,6 +163,7 @@ void checkButtonRelease() {
         digitalWrite(GREEN_LED, LOW);
         Serial.println("Release was Green");
     } if (btn4.isReleased()) {
+        noTone(BUZZER);
         if (!running) {
             btnCount--;
         }
@@ -192,13 +205,7 @@ void gameOver() {
     running = false;
     btnCount = 0;
     Serial.println("Game Over!");
-    // red light flashes
-    for (int i = 0; i < 7; i++) {
-        digitalWrite(RED_LED, HIGH);
-        delay(100);
-        digitalWrite(RED_LED, LOW);
-        delay(100);
-    }
+    gameOverLights();
 }
 
 void gameWin() {
@@ -206,13 +213,7 @@ void gameWin() {
     running = false;
     btnCount = 0;
     Serial.println("You Win!");
-    // green light flashes
-    for (int i = 0; i < 7; i++) {
-        digitalWrite(GREEN_LED, HIGH);
-        delay(100);
-        digitalWrite(GREEN_LED, LOW);
-        delay(100);
-    }
+    gameWinLights();
 }
 
 // waiting for game to start
@@ -223,8 +224,11 @@ void gameWait() {
     if (btnCount == 4) {
         Serial.println("All Buttons Pressed!");
         ledOff();
+        noTone(BUZZER);
         delay(1000);
         startGame();
+    } else if (btnCount > 4 || btnCount < 0) {
+        btnCount = 0;
     }
 }
 
@@ -233,6 +237,9 @@ void gamePlay() {
     checkButtonRelease();
     checkButtonPress();
     if (inputCount == level) {
+        delay(100);
+        ledOff();
+        noTone(BUZZER);
         Serial.println("Checking guess...");
         for (int i = 0; i < level; i++) {
             Serial.println(inputArr[i]);

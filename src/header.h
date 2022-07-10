@@ -3,4 +3,6 @@
     void ledOn();
     void ledOff();
     void startGameLights();
+    void gameOverLights();
+    void gameWinLights();
 #endif 
